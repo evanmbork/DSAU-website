@@ -3,70 +3,82 @@ import { Link } from "react-router-dom";
 import { client } from "../lib/sanity";
 import { qProjects } from "../lib/queries";
 
-type ProjectListItem = {
+type Project = {
   _id: string;
   title: string;
   slug: string;
-  summary?: string;
+  excerpt?: string;
+  category?: string;
+  status?: string;
   coverImage?: { alt?: string; asset?: { url?: string } };
 };
 
 export default function ProjectsIndex() {
-  const [items, setItems] = useState<ProjectListItem[]>([]);
+  const [items, setItems] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const [err, setErr] = useState<string | null>(null);
 
   useEffect(() => {
     let alive = true;
-    client
-      .fetch<ProjectListItem[]>(qProjects)
-      .then((data) => {
-        if (!alive) return;
-        setItems(data || []);
-      })
-      .finally(() => {
-        if (!alive) return;
-        setLoading(false);
-      });
+    (async () => {
+      try {
+        const data = await client.fetch<Project[]>(qProjects);
+        if (alive) setItems(data || []);
+      } catch (e: any) {
+        if (alive) setErr(e?.message || "Failed to load projects");
+      } finally {
+        if (alive) setLoading(false);
+      }
+    })();
     return () => {
       alive = false;
     };
   }, []);
 
+  if (loading) return <div className="p-6">Loading…</div>;
+  if (err) return <div className="p-6 text-red-600">{err}</div>;
+
   return (
     <div className="mx-auto max-w-5xl px-4 py-10">
-      <h1 className="text-3xl font-semibold">Projects</h1>
-      <p className="mt-2 text-slate-600">Previous initiatives, fundraisers, and collaborations.</p>
+      <h1 className="text-3xl font-semibold tracking-tight">Projects</h1>
 
-      {loading ? (
-        <p className="mt-6 text-slate-600">Loading…</p>
-      ) : items.length === 0 ? (
-        <div className="mt-6 rounded-xl border p-5 text-slate-700">
-          <p className="font-medium">No projects yet.</p>
-          <p className="mt-1 text-sm text-slate-600">
-            In Studio, create a <code>project</code> and click <b>Publish</b>.
-          </p>
-        </div>
-      ) : (
-        <div className="mt-6 grid gap-4 sm:grid-cols-2">
-          {items.map((p) => (
+      <div className="mt-8 grid gap-6 sm:grid-cols-2">
+        {items.map((p) => {
+          const img = p.coverImage?.asset?.url;
+          return (
             <Link
               key={p._id}
               to={`/projects/${p.slug}`}
-              className="rounded-2xl border bg-white p-5 shadow-sm transition hover:shadow-md"
+              className="group overflow-hidden rounded-2xl border bg-white shadow-sm transition hover:shadow-md"
             >
-              {p.coverImage?.asset?.url ? (
-                <img
-                  src={p.coverImage.asset.url}
-                  alt={p.coverImage.alt || p.title}
-                  className="mb-4 h-40 w-full rounded-xl object-cover"
-                />
-              ) : null}
-              <div className="text-lg font-semibold">{p.title}</div>
-              {p.summary ? <p className="mt-2 text-slate-600">{p.summary}</p> : null}
+              {img ? (
+                <div className="aspect-[16/9] w-full overflow-hidden bg-gray-100">
+                  <img
+                    src={img}
+                    alt={p.coverImage?.alt || p.title}
+                    className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
+                    loading="lazy"
+                  />
+                </div>
+              ) : (
+                <div className="aspect-[16/9] w-full bg-gray-100" />
+              )}
+
+              <div className="p-5">
+                <div className="flex flex-wrap items-center gap-2 text-xs text-gray-600">
+                  {p.category ? <span className="rounded-full border px-2 py-0.5">{p.category}</span> : null}
+                  {p.status ? <span className="rounded-full border px-2 py-0.5">{p.status}</span> : null}
+                </div>
+                <div className="mt-2 text-lg font-semibold">{p.title}</div>
+                {p.excerpt ? <p className="mt-2 line-clamp-3 text-sm text-gray-600">{p.excerpt}</p> : null}
+                <div className="mt-4 text-sm font-medium text-gray-900 group-hover:underline">
+                  View →
+                </div>
+              </div>
             </Link>
-          ))}
-        </div>
-      )}
+          );
+        })}
+      </div>
     </div>
   );
 }

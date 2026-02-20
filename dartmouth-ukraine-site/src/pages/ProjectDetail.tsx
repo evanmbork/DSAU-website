@@ -1,116 +1,90 @@
-import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
-import { client } from "../lib/sanity";
-import { qProjectBySlug } from "../lib/queries";
-import { PortableText } from "@portabletext/react";
+import { useEffect, useState } from 'react'
+import { useParams, Link } from 'react-router-dom'
+import { client, urlFor } from '../lib/sanity'
+import RichText from '../components/RichText'
+import groq from 'groq'
 
-type ProjectFull = {
-  _id: string;
-  title: string;
-  slug: string;
-  summary?: string;
-  timeline?: string[];
-  impact?: string[];
-  links?: { label?: string; url?: string }[];
-  coverImage?: { alt?: string; asset?: { url?: string } };
-  body?: any;
-};
+type Project = {
+  title: string
+  summary?: string
+  coverImage?: any
+  body?: any
+}
+
+const q = groq`
+  *[_type == "project" && slug.current == $slug][0]{
+    title,
+    summary,
+    coverImage,
+    body
+  }
+`
 
 export default function ProjectDetail() {
-  const { slug } = useParams();
-  const [item, setItem] = useState<ProjectFull | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { slug } = useParams()
+  const [data, setData] = useState<Project | null>(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!slug) return;
-    let alive = true;
-    client
-      .fetch<ProjectFull>(qProjectBySlug, { slug })
-      .then((data) => {
-        if (!alive) return;
-        setItem(data || null);
-      })
-      .finally(() => {
-        if (!alive) return;
-        setLoading(false);
-      });
+    let mounted = true
+    async function run() {
+      setLoading(true)
+      const res = await client.fetch(q, { slug })
+      if (mounted) {
+        setData(res ?? null)
+        setLoading(false)
+      }
+    }
+    run()
     return () => {
-      alive = false;
-    };
-  }, [slug]);
+      mounted = false
+    }
+  }, [slug])
+
+  if (loading) {
+    return <div className="mx-auto max-w-3xl px-4 py-10">Loading…</div>
+  }
+
+  if (!data) {
+    return (
+      <div className="mx-auto max-w-3xl px-4 py-10">
+        <h1 className="text-2xl font-bold">Project not found</h1>
+        <p className="mt-3">
+          <Link className="underline" to="/projects">
+            Back to Projects
+          </Link>
+        </p>
+      </div>
+    )
+  }
+
+  const cover =
+    data.coverImage?.asset ? urlFor(data.coverImage).width(1600).auto('format').quality(80).url() : null
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10">
-      <Link to="/projects" className="text-sm text-slate-600 hover:underline">
-        ← Back to projects
-      </Link>
+    <article className="mx-auto max-w-3xl px-4 py-10">
+      <div className="mb-6">
+        <Link to="/projects" className="text-sm underline underline-offset-4">
+          ← Back to Projects
+        </Link>
+      </div>
 
-      {loading ? (
-        <p className="mt-6 text-slate-600">Loading…</p>
-      ) : !item ? (
-        <div className="mt-6 rounded-xl border p-5">
-          <p className="font-medium">Not found.</p>
-          <p className="mt-1 text-sm text-slate-600">
-            If you just created it, make sure it’s <b>Published</b> and has a slug.
-          </p>
-        </div>
-      ) : (
-        <article className="mt-6">
-          {item.coverImage?.asset?.url ? (
-            <img
-              src={item.coverImage.asset.url}
-              alt={item.coverImage.alt || item.title}
-              className="mb-6 h-56 w-full rounded-2xl object-cover"
-            />
-          ) : null}
+      <h1 className="text-4xl font-bold tracking-tight">{data.title}</h1>
 
-          <h1 className="text-3xl font-semibold">{item.title}</h1>
-          {item.summary ? <p className="mt-3 text-slate-700">{item.summary}</p> : null}
+      {data.summary ? <p className="mt-4 text-lg text-slate-700">{data.summary}</p> : null}
 
-          <div className="mt-8 grid gap-6 sm:grid-cols-2">
-            {item.timeline?.length ? (
-              <section className="rounded-2xl border bg-white p-5">
-                <h2 className="font-semibold">Timeline</h2>
-                <ul className="mt-3 list-disc space-y-2 pl-5 text-slate-700">
-                  {item.timeline.map((t, i) => (
-                    <li key={i}>{t}</li>
-                  ))}
-                </ul>
-              </section>
-            ) : null}
+      {cover ? (
+        <img
+          src={cover}
+          alt=""
+          className="mt-8 w-full rounded-2xl border border-slate-200"
+          loading="lazy"
+        />
+      ) : null}
 
-            {item.impact?.length ? (
-              <section className="rounded-2xl border bg-white p-5">
-                <h2 className="font-semibold">Impact</h2>
-                <ul className="mt-3 list-disc space-y-2 pl-5 text-slate-700">
-                  {item.impact.map((t, i) => (
-                    <li key={i}>{t}</li>
-                  ))}
-                </ul>
-              </section>
-            ) : null}
-          </div>
-
-          {item.links?.length ? (
-            <section className="mt-6 rounded-2xl border bg-white p-5">
-              <h2 className="font-semibold">Links</h2>
-              <ul className="mt-3 space-y-2">
-                {item.links.map((l, i) => (
-                  <li key={i}>
-                    <a className="text-blue-700 hover:underline" href={l.url || "#"} target="_blank" rel="noreferrer">
-                      {l.label || l.url}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          ) : null}
-
-          <div className="prose prose-slate mt-10 max-w-none">
-            {item.body ? <PortableText value={item.body} /> : <p>(No body yet)</p>}
-          </div>
-        </article>
-      )}
-    </div>
-  );
+      <div className="prose prose-slate mt-8 max-w-none">
+        <RichText value={data.body} />
+      </div>
+    </article>
+  )
 }

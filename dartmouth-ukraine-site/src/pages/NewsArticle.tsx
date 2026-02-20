@@ -1,75 +1,98 @@
-import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
-import { client } from "../lib/sanity";
-import { qNewsArticleBySlug } from "../lib/queries";
-import { PortableText } from "@portabletext/react";
+import { useEffect, useState } from 'react'
+import { useParams, Link } from 'react-router-dom'
+import { client, urlFor } from '../lib/sanity'
+import RichText from '../components/RichText'
+import groq from 'groq'
 
-type NewsFull = {
-  _id: string;
-  title: string;
-  slug: string;
-  excerpt?: string;
-  publishedAt?: string;
-  body?: any;
-};
-
-function fmtDate(iso?: string) {
-  if (!iso) return "";
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "";
-  return d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+type Article = {
+  title: string
+  publishedAt?: string
+  excerpt?: string
+  coverImage?: any
+  body?: any
 }
 
+const q = groq`
+  *[_type == "newsArticle" && slug.current == $slug][0]{
+    title,
+    publishedAt,
+    excerpt,
+    coverImage,
+    body
+  }
+`
+
 export default function NewsArticle() {
-  const { slug } = useParams();
-  const [item, setItem] = useState<NewsFull | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { slug } = useParams()
+  const [data, setData] = useState<Article | null>(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!slug) return;
-    let alive = true;
-    client
-      .fetch<NewsFull>(qNewsArticleBySlug, { slug })
-      .then((data) => {
-        if (!alive) return;
-        setItem(data || null);
-      })
-      .finally(() => {
-        if (!alive) return;
-        setLoading(false);
-      });
-
+    let mounted = true
+    async function run() {
+      setLoading(true)
+      const res = await client.fetch(q, { slug })
+      if (mounted) {
+        setData(res ?? null)
+        setLoading(false)
+      }
+    }
+    run()
     return () => {
-      alive = false;
-    };
-  }, [slug]);
+      mounted = false
+    }
+  }, [slug])
+
+  if (loading) {
+    return <div className="mx-auto max-w-3xl px-4 py-10">Loading…</div>
+  }
+
+  if (!data) {
+    return (
+      <div className="mx-auto max-w-3xl px-4 py-10">
+        <h1 className="text-2xl font-bold">Article not found</h1>
+        <p className="mt-3">
+          <Link className="underline" to="/news">
+            Back to News
+          </Link>
+        </p>
+      </div>
+    )
+  }
+
+  const cover =
+    data.coverImage?.asset ? urlFor(data.coverImage).width(1600).auto('format').quality(80).url() : null
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10">
-      <Link to="/news" className="text-sm text-slate-600 hover:underline">
-        ← Back to news
-      </Link>
+    <article className="mx-auto max-w-3xl px-4 py-10">
+      <div className="mb-6">
+        <Link to="/news" className="text-sm underline underline-offset-4">
+          ← Back to News
+        </Link>
+      </div>
 
-      {loading ? (
-        <p className="mt-6 text-slate-600">Loading…</p>
-      ) : !item ? (
-        <div className="mt-6 rounded-xl border p-5">
-          <p className="font-medium">Not found.</p>
-          <p className="mt-1 text-sm text-slate-600">
-            If you just created it in Studio, make sure you clicked <b>Publish</b> and that the slug matches the URL.
-          </p>
-        </div>
-      ) : (
-        <article className="mt-6">
-          <h1 className="text-3xl font-semibold">{item.title}</h1>
-          <div className="mt-2 text-sm text-slate-500">{fmtDate(item.publishedAt)}</div>
-          {item.excerpt ? <p className="mt-4 text-slate-700">{item.excerpt}</p> : null}
+      <h1 className="text-4xl font-bold tracking-tight">{data.title}</h1>
 
-          <div className="prose prose-slate mt-8 max-w-none">
-            {item.body ? <PortableText value={item.body} /> : <p>(No body yet)</p>}
-          </div>
-        </article>
-      )}
-    </div>
-  );
+      {data.publishedAt ? (
+        <p className="mt-2 text-sm text-slate-600">
+          {new Date(data.publishedAt).toLocaleDateString()}
+        </p>
+      ) : null}
+
+      {data.excerpt ? <p className="mt-4 text-lg text-slate-700">{data.excerpt}</p> : null}
+
+      {cover ? (
+        <img
+          src={cover}
+          alt=""
+          className="mt-8 w-full rounded-2xl border border-slate-200"
+          loading="lazy"
+        />
+      ) : null}
+
+      <div className="prose prose-slate mt-8 max-w-none">
+        <RichText value={data.body} />
+      </div>
+    </article>
+  )
 }

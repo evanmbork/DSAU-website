@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-const SANITY_STUDIO_URL = "https://YOUR-STUDIO-URL.sanity.studio";
+const SANITY_STUDIO_URL = "http://localhost:3333/";
 
 export default function AdminRedirect() {
   useEffect(() => {

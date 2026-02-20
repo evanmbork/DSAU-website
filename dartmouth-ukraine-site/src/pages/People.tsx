@@ -1,30 +1,90 @@
+import { useEffect, useState } from "react";
+import { client } from "../lib/sanity";
+import { qPeople } from "../lib/queries";
+
+type Person = {
+  _id: string;
+  name: string;
+  role?: string;
+  bio?: any;
+  photo?: { alt?: string; asset?: { url?: string } };
+  links?: { label?: string; url?: string }[];
+};
+
 export default function People() {
+  const [items, setItems] = useState<Person[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let alive = true;
+    client
+      .fetch<Person[]>(qPeople)
+      .then((data) => {
+        if (!alive) return;
+        setItems(data || []);
+      })
+      .finally(() => {
+        if (!alive) return;
+        setLoading(false);
+      });
+    return () => {
+      alive = false;
+    };
+  }, []);
+
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-semibold text-slate-900">People</h1>
+    <div className="mx-auto max-w-5xl px-4 py-10">
+      <h1 className="text-3xl font-semibold">People</h1>
 
-      <div className="rounded-2xl border bg-white p-6 shadow-sm">
-        <p className="text-slate-700">
-          Add your leadership roles + members here. (We can pull this from Sanity later too,
-          but hardcoding is fine to start.)
-        </p>
-
-        <div className="mt-4 grid md:grid-cols-2 gap-4">
-          <PersonCard name="President" details="Name TBD" />
-          <PersonCard name="Treasurer" details="Name TBD" />
-          <PersonCard name="Events" details="Name TBD" />
-          <PersonCard name="Comms / Writing" details="Name TBD" />
+      {loading ? (
+        <p className="mt-6 text-slate-600">Loading…</p>
+      ) : items.length === 0 ? (
+        <div className="mt-6 rounded-xl border p-5 text-slate-700">
+          <p className="font-medium">No people yet.</p>
+          <p className="mt-1 text-sm text-slate-600">
+            In Studio, create a <code>person</code> and click <b>Publish</b>.
+          </p>
         </div>
-      </div>
-    </div>
-  );
-}
+      ) : (
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {items.map((p) => (
+            <div key={p._id} className="rounded-2xl border bg-white p-5 shadow-sm">
+              <div className="flex items-center gap-4">
+                {p.photo?.asset?.url ? (
+                  <img
+                    src={p.photo.asset.url}
+                    alt={p.photo.alt || p.name}
+                    className="h-12 w-12 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="h-12 w-12 rounded-full bg-slate-200" />
+                )}
 
-function PersonCard({ name, details }: { name: string; details: string }) {
-  return (
-    <div className="rounded-xl border p-4">
-      <div className="font-semibold text-slate-900">{name}</div>
-      <div className="text-slate-700">{details}</div>
+                <div>
+                  <div className="font-semibold">{p.name}</div>
+                  {p.role ? <div className="text-sm text-slate-600">{p.role}</div> : null}
+                </div>
+              </div>
+
+              {p.links?.length ? (
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {p.links.map((l, i) => (
+                    <a
+                      key={i}
+                      href={l.url || "#"}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="rounded-full border px-3 py-1 text-sm text-slate-700 hover:bg-slate-50"
+                    >
+                      {l.label || "Link"}
+                    </a>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

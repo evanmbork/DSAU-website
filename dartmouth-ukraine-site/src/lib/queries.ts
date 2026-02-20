@@ -1,47 +1,90 @@
-import groq from "groq"; // changed from what ChatGPT suggested to avoid a type error with the Sanity client
+import groq from "groq";
 
-export const qLatestArticles = groq`
-*[_type == "article"] | order(publishedAt desc) {
+/**
+ * NEWS
+ */
+export const qLatestNewsArticles = groq`
+*[_type == "newsArticle" && defined(slug.current)]
+| order(publishedAt desc){
   _id,
   title,
   "slug": slug.current,
-  publishedAt,
-  excerpt
-}[0...50]
+  excerpt,
+  publishedAt
+}
 `;
 
-export const qArticleBySlug = groq`
-*[_type == "article" && slug.current == $slug][0]{
+export const qNewsArticleBySlug = groq`
+*[_type == "newsArticle" && slug.current == $slug][0]{
   _id,
   title,
+  "slug": slug.current,
+  excerpt,
   publishedAt,
   body
 }
 `;
 
+export const qNewsArticleSlugs = groq`
+*[_type == "newsArticle" && defined(slug.current)].slug.current
+`;
+
+/**
+ * PROJECTS
+ */
 export const qProjects = groq`
-*[_type == "project"] | order(date desc) {
+*[_type == "project" && defined(slug.current)]
+| order(_createdAt desc){
   _id,
   title,
   "slug": slug.current,
-  date,
-  summary
-}[0...50]
+  summary,
+  timeline,
+  impact,
+  links,
+  coverImage{
+    alt,
+    asset->{ url }
+  }
+}
 `;
 
 export const qProjectBySlug = groq`
 *[_type == "project" && slug.current == $slug][0]{
   _id,
   title,
-  date,
+  "slug": slug.current,
+  summary,
+  timeline,
+  impact,
+  links,
+  coverImage{
+    alt,
+    asset->{ url }
+  },
   body
 }
 `;
 
-export const qArticleSlugs = groq`
-*[_type == "article" && defined(slug.current)].slug.current
-`;
-
 export const qProjectSlugs = groq`
 *[_type == "project" && defined(slug.current)].slug.current
+`;
+
+/**
+ * PEOPLE
+ */
+export const qPeople = groq`
+*[_type == "person"]
+| order(order asc, name asc){
+  _id,
+  name,
+  role,
+  bio,
+  order,
+  links,
+  photo{
+    alt,
+    asset->{ url }
+  }
+}
 `;

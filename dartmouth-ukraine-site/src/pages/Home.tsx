@@ -9,7 +9,7 @@ export default function Home() {
         </h1>
 
         <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-          Supporting Ukraine through education, advocacy, and action.
+          Supporting Ukraine through advocacy and action.
         </p>
 
         <div className="flex justify-center gap-4 pt-4">
@@ -24,7 +24,7 @@ export default function Home() {
             href="/news"
             className="px-6 py-3 border border-slate-300 rounded-md font-medium hover:bg-slate-50 transition"
           >
-            Read Our Work
+            See Our Impact
           </a>
         </div>
       </section>
@@ -39,11 +39,11 @@ export default function Home() {
           <p className="text-slate-600 leading-relaxed">
             We aim to raise awareness about the ongoing war in Ukraine,
             support humanitarian efforts, and create meaningful dialogue
-            on campus about freedom, sovereignty, and global security.
+            on campus about Ukrainian cluture and sovereignty.
           </p>
 
           <p className="text-slate-600 leading-relaxed">
-            Through events, partnerships, and journalism, we connect
+            Through events, partnerships, and advocacy, we connect
             Dartmouth students to the realities of modern Ukraine.
           </p>
         </div>
@@ -55,7 +55,7 @@ export default function Home() {
 
           <ul className="space-y-3 text-slate-600">
             <li>• Publish articles and campus commentary</li>
-            <li>• Organize fundraisers and speaker events</li>
+            <li>• Organize fundraisers and events</li>
             <li>• Partner with Ukrainian organizations</li>
             <li>• Support students with Ukrainian heritage</li>
           </ul>
@@ -70,7 +70,7 @@ export default function Home() {
 
         <p className="text-slate-300 max-w-xl mx-auto">
           Whether you're Ukrainian or simply care about democracy and
-          sovereignty, there's a place for you here.
+          sovereignty, there's a place for you in the club.
         </p>
 
         <a

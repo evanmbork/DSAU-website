@@ -1,1 +1,166 @@
 @import "tailwindcss";
+
+/* --- Dartmouth fonts (local) --- */
+@font-face {
+  font-family: "National2";
+  src: url("./assets/fonts/National2-Thin.otf") format("opentype");
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "National2";
+  src: url("./assets/fonts/National2-ThinItalic.otf") format("opentype");
+  font-weight: 100;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "National2";
+  src: url("./assets/fonts/National2-Extralight.otf") format("opentype");
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "National2";
+  src: url("./assets/fonts/National2-ExtralightItalic.otf") format("opentype");
+  font-weight: 200;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "National2";
+  src: url("./assets/fonts/National2-Light.otf") format("opentype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "National2";
+  src: url("./assets/fonts/National2-LightItalic.otf") format("opentype");
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "National2";
+  src: url("./assets/fonts/National2-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "National2";
+  src: url("./assets/fonts/National2-RegularItalic.otf") format("opentype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "National2";
+  src: url("./assets/fonts/National2-Medium.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "National2";
+  src: url("./assets/fonts/National2-MediumItalic.otf") format("opentype");
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "National2";
+  src: url("./assets/fonts/National2-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "National2";
+  src: url("./assets/fonts/National2-BoldItalic.otf") format("opentype");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "National2";
+  src: url("./assets/fonts/National2-Extrabold.otf") format("opentype");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "National2";
+  src: url("./assets/fonts/National2-ExtraboldItalic.otf") format("opentype");
+  font-weight: 800;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "National2";
+  src: url("./assets/fonts/National2-Black.otf") format("opentype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "National2";
+  src: url("./assets/fonts/National2-BlackItalic.otf") format("opentype");
+  font-weight: 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* DartmouthRuzicka */
+@font-face {
+  font-family: "DartmouthRuzicka";
+  src: url("./assets/fonts/DartmouthRuzicka-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "DartmouthRuzicka";
+  src: url("./assets/fonts/DartmouthRuzicka-RegularItalic.ttf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "DartmouthRuzicka";
+  src: url("./assets/fonts/DartmouthRuzicka-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "DartmouthRuzicka";
+  src: url("./assets/fonts/DartmouthRuzicka-BoldItalic.ttf") format("truetype");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Apply defaults */
+:root {
+  --font-body: "National2", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  --font-heading: "DartmouthRuzicka", Georgia, "Times New Roman", Times, serif;
+}
+
+body {
+  font-family: var(--font-body);
+}
+
+h1, h2, h3, .site-title {
+  font-family: var(--font-heading);
+}

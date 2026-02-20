@@ -8,7 +8,7 @@ export default function Contact() {
           Email: <span className="font-medium">dartmouthukraine@dartmouth.edu</span> (replace)
         </p>
         <p className="text-slate-700">
-          Instagram: <span className="font-medium">@yourhandle</span> (replace)
+          Instagram: <span className="font-medium">@dartmouth.ukraine.alliance</span>
         </p>
       </div>
     </div>

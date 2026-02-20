@@ -8,7 +8,7 @@ export default function Footer() {
           <span>© {new Date().getFullYear()} DSAU</span>
           <a
             className="hover:text-slate-900"
-            href="https://www.instagram.com/"
+            href="https://www.instagram.com/dartmouth.ukraine.alliance/"
             target="_blank"
             rel="noreferrer"
           >

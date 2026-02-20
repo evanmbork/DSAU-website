@@ -1,52 +1,86 @@
-import { Link } from "react-router-dom";
-
 export default function Home() {
   return (
-    <div className="space-y-10">
-      <section className="rounded-2xl border bg-white p-8 shadow-sm">
-        <h1 className="text-3xl font-semibold text-slate-900">
+    <div className="space-y-16">
+
+      {/* HERO */}
+      <section className="text-center space-y-6">
+        <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-slate-900">
           Dartmouth Student Alliance for Ukraine
         </h1>
-        <p className="mt-3 text-slate-700 max-w-2xl">
-          We support Ukraine through education, community events, fundraising, and advocacy.
-          This site shares our latest updates, projects, and ways to help.
+
+        <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+          Supporting Ukraine through education, advocacy, and action.
         </p>
-        <div className="mt-6 flex gap-3">
-          <Link
-            to="/news"
-            className="inline-flex items-center rounded-lg bg-slate-900 px-4 py-2 text-white hover:bg-slate-800"
+
+        <div className="flex justify-center gap-4 pt-4">
+          <a
+            href="/help"
+            className="px-6 py-3 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 transition"
           >
-            Read updates
-          </Link>
-          <Link
-            to="/help"
-            className="inline-flex items-center rounded-lg border px-4 py-2 text-slate-900 hover:bg-slate-50"
+            Get Involved
+          </a>
+
+          <a
+            href="/news"
+            className="px-6 py-3 border border-slate-300 rounded-md font-medium hover:bg-slate-50 transition"
           >
-            How to help
-          </Link>
+            Read Our Work
+          </a>
         </div>
       </section>
 
-      <section className="grid md:grid-cols-3 gap-4">
-        <Card title="Articles / News" to="/news">
-          Announcements, statements, and event recaps.
-        </Card>
-        <Card title="Projects" to="/projects">
-          Previous initiatives, fundraisers, and collaborations.
-        </Card>
-        <Card title="People" to="/people">
-          Club members, roles, and how to get involved.
-        </Card>
-      </section>
-    </div>
-  );
-}
+      {/* MISSION */}
+      <section className="grid md:grid-cols-2 gap-12 items-center">
+        <div className="space-y-4">
+          <h2 className="text-2xl font-semibold text-slate-900">
+            Our Mission
+          </h2>
 
-function Card({ title, to, children }: { title: string; to: string; children: React.ReactNode }) {
-  return (
-    <Link to={to} className="rounded-2xl border bg-white p-6 shadow-sm hover:bg-slate-50">
-      <div className="text-lg font-semibold text-slate-900">{title}</div>
-      <div className="mt-2 text-slate-700">{children}</div>
-    </Link>
+          <p className="text-slate-600 leading-relaxed">
+            We aim to raise awareness about the ongoing war in Ukraine,
+            support humanitarian efforts, and create meaningful dialogue
+            on campus about freedom, sovereignty, and global security.
+          </p>
+
+          <p className="text-slate-600 leading-relaxed">
+            Through events, partnerships, and journalism, we connect
+            Dartmouth students to the realities of modern Ukraine.
+          </p>
+        </div>
+
+        <div className="bg-slate-100 rounded-lg p-8">
+          <h3 className="font-semibold text-slate-900 mb-4">
+            What We Do
+          </h3>
+
+          <ul className="space-y-3 text-slate-600">
+            <li>• Publish articles and campus commentary</li>
+            <li>• Organize fundraisers and speaker events</li>
+            <li>• Partner with Ukrainian organizations</li>
+            <li>• Support students with Ukrainian heritage</li>
+          </ul>
+        </div>
+      </section>
+
+      {/* CALL TO ACTION */}
+      <section className="bg-slate-900 text-white rounded-xl p-12 text-center space-y-6">
+        <h2 className="text-3xl font-semibold">
+          Stand with Ukraine.
+        </h2>
+
+        <p className="text-slate-300 max-w-xl mx-auto">
+          Whether you're Ukrainian or simply care about democracy and
+          sovereignty, there's a place for you here.
+        </p>
+
+        <a
+          href="/contact"
+          className="inline-block px-6 py-3 bg-white text-slate-900 rounded-md font-medium hover:bg-slate-100 transition"
+        >
+          Join the Alliance
+        </a>
+      </section>
+
+    </div>
   );
 }

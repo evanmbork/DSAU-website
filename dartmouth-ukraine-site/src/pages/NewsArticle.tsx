@@ -1,73 +1,98 @@
-import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
-import { client } from "../lib/sanity";
-import { qArticleBySlug } from "../lib/queries";
-import { PortableText } from "@portabletext/react";
+import { useEffect, useState } from 'react'
+import { useParams, Link } from 'react-router-dom'
+import { client, urlFor } from '../lib/sanity'
+import RichText from '../components/RichText'
+import groq from 'groq'
 
 type Article = {
-  title: string;
-  publishedAt?: string;
-  excerpt?: string;
-  content?: any[];
-  coverImage?: { alt?: string; asset?: { url?: string } };
-};
+  title: string
+  publishedAt?: string
+  excerpt?: string
+  coverImage?: any
+  body?: any
+}
+
+const q = groq`
+  *[_type == "newsArticle" && slug.current == $slug][0]{
+    title,
+    publishedAt,
+    excerpt,
+    coverImage,
+    body
+  }
+`
 
 export default function NewsArticle() {
-  const { slug } = useParams();
-  const [item, setItem] = useState<Article | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [err, setErr] = useState<string | null>(null);
+  const { slug } = useParams()
+  const [data, setData] = useState<Article | null>(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    let alive = true;
-    (async () => {
-      try {
-        const data = await client.fetch<Article>(qArticleBySlug, { slug });
-        if (alive) setItem(data || null);
-      } catch (e: any) {
-        if (alive) setErr(e?.message || "Failed to load article");
-      } finally {
-        if (alive) setLoading(false);
+    let mounted = true
+    async function run() {
+      setLoading(true)
+      const res = await client.fetch(q, { slug })
+      if (mounted) {
+        setData(res ?? null)
+        setLoading(false)
       }
-    })();
+    }
+    run()
     return () => {
-      alive = false;
-    };
-  }, [slug]);
+      mounted = false
+    }
+  }, [slug])
 
-  if (loading) return <div className="p-6">Loading…</div>;
-  if (err) return <div className="p-6 text-red-600">{err}</div>;
-  if (!item) return <div className="p-6">Not found.</div>;
+  if (loading) {
+    return <div className="mx-auto max-w-3xl px-4 py-10">Loading…</div>
+  }
 
-  const img = item.coverImage?.asset?.url;
+  if (!data) {
+    return (
+      <div className="mx-auto max-w-3xl px-4 py-10">
+        <h1 className="text-2xl font-bold">Article not found</h1>
+        <p className="mt-3">
+          <Link className="underline" to="/news">
+            Back to News
+          </Link>
+        </p>
+      </div>
+    )
+  }
+
+  const cover =
+    data.coverImage?.asset ? urlFor(data.coverImage).width(1600).auto('format').quality(80).url() : null
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10">
-      <Link to="/news" className="text-sm text-gray-600 hover:underline">
-        ← Back to News
-      </Link>
-
-      <h1 className="mt-4 text-3xl font-semibold tracking-tight">{item.title}</h1>
-
-      <div className="mt-2 text-sm text-gray-500">
-        {item.publishedAt ? new Date(item.publishedAt).toLocaleDateString() : ""}
+    <article className="mx-auto max-w-3xl px-4 py-10">
+      <div className="mb-6">
+        <Link to="/news" className="text-sm underline underline-offset-4">
+          ← Back to News
+        </Link>
       </div>
 
-      {img ? (
-        <div className="mt-6 overflow-hidden rounded-2xl border bg-gray-100">
-          <img
-            src={img}
-            alt={item.coverImage?.alt || item.title}
-            className="h-auto w-full object-cover"
-          />
-        </div>
+      <h1 className="text-4xl font-bold tracking-tight">{data.title}</h1>
+
+      {data.publishedAt ? (
+        <p className="mt-2 text-sm text-slate-600">
+          {new Date(data.publishedAt).toLocaleDateString()}
+        </p>
       ) : null}
 
-      {item.excerpt ? <p className="mt-6 text-gray-700">{item.excerpt}</p> : null}
+      {data.excerpt ? <p className="mt-4 text-lg text-slate-700">{data.excerpt}</p> : null}
 
-      <div className="prose prose-gray mt-8 max-w-none">
-        {item.content ? <PortableText value={item.content} /> : null}
+      {cover ? (
+        <img
+          src={cover}
+          alt=""
+          className="mt-8 w-full rounded-2xl border border-slate-200"
+          loading="lazy"
+        />
+      ) : null}
+
+      <div className="prose prose-slate mt-8 max-w-none">
+        <RichText value={data.body} />
       </div>
-    </div>
-  );
+    </article>
+  )
 }

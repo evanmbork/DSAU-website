@@ -1,23 +1,14 @@
-import { sanity } from "./sanity";
-import { qArticleSlugs, qProjectSlugs } from "./queries";
+import { client } from "./sanity";
+import { qNewsArticleSlugs, qProjectSlugs } from "./queries";
 
 export async function getIncludedRoutes(): Promise<string[]> {
-  // Always include static routes
-  const base = ["/", "/news", "/projects", "/help", "/people", "/contact", "/admin"];
+  const [newsSlugs, projectSlugs] = await Promise.all([
+    client.fetch<string[]>(qNewsArticleSlugs),
+    client.fetch<string[]>(qProjectSlugs),
+  ]);
 
-  // During dev / before Sanity is set up, env vars may be missing.
-  // We fail gracefully and just return static routes.
-  try {
-    const [articleSlugs, projectSlugs] = await Promise.all([
-      sanity.fetch<string[]>(qArticleSlugs),
-      sanity.fetch<string[]>(qProjectSlugs),
-    ]);
+  const newsRoutes = (newsSlugs || []).map((s) => `/news/${s}`);
+  const projectRoutes = (projectSlugs || []).map((s) => `/projects/${s}`);
 
-    for (const slug of articleSlugs ?? []) base.push(`/news/${slug}`);
-    for (const slug of projectSlugs ?? []) base.push(`/projects/${slug}`);
-
-    return Array.from(new Set(base));
-  } catch {
-    return base;
-  }
+  return [...newsRoutes, ...projectRoutes];
 }

@@ -1,48 +1,75 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
+import { client } from "../lib/sanity";
+import { qNewsArticleBySlug } from "../lib/queries";
 import { PortableText } from "@portabletext/react";
-import { sanity } from "../lib/sanity.ts";
-import { qArticleBySlug } from "../lib/queries.ts";
-import type { ArticleFull } from "../types/cms.ts";
+
+type NewsFull = {
+  _id: string;
+  title: string;
+  slug: string;
+  excerpt?: string;
+  publishedAt?: string;
+  body?: any;
+};
+
+function fmtDate(iso?: string) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  return d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+}
 
 export default function NewsArticle() {
-  const { slug } = useParams<{ slug: string }>();
-  const [data, setData] = useState<ArticleFull | null>(null);
+  const { slug } = useParams();
+  const [item, setItem] = useState<NewsFull | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!slug) return;
-    sanity
-      .fetch<ArticleFull | null>(qArticleBySlug, { slug })
-      .then((res: any) => setData(res))
-      .finally(() => setLoading(false));
+    let alive = true;
+    client
+      .fetch<NewsFull>(qNewsArticleBySlug, { slug })
+      .then((data) => {
+        if (!alive) return;
+        setItem(data || null);
+      })
+      .finally(() => {
+        if (!alive) return;
+        setLoading(false);
+      });
+
+    return () => {
+      alive = false;
+    };
   }, [slug]);
 
-  if (loading) return <div className="text-slate-600">Loading…</div>;
-
-  if (!data) {
-    return (
-      <div className="space-y-4">
-        <div className="text-slate-700">Not found.</div>
-        <Link className="text-slate-900 underline" to="/news">
-          Back to news
-        </Link>
-      </div>
-    );
-  }
-
   return (
-    <article className="prose prose-slate max-w-none">
-      <Link to="/news" className="no-underline text-sm text-slate-600 hover:text-slate-900">
-        ← Back
+    <div className="mx-auto max-w-3xl px-4 py-10">
+      <Link to="/news" className="text-sm text-slate-600 hover:underline">
+        ← Back to news
       </Link>
-      <h1>{data.title}</h1>
-      {data.publishedAt ? (
-        <p className="text-sm text-slate-500">
-          {new Date(data.publishedAt).toLocaleDateString()}
-        </p>
-      ) : null}
-      {data.body ? <PortableText value={data.body} /> : null}
-    </article>
+
+      {loading ? (
+        <p className="mt-6 text-slate-600">Loading…</p>
+      ) : !item ? (
+        <div className="mt-6 rounded-xl border p-5">
+          <p className="font-medium">Not found.</p>
+          <p className="mt-1 text-sm text-slate-600">
+            If you just created it in Studio, make sure you clicked <b>Publish</b> and that the slug matches the URL.
+          </p>
+        </div>
+      ) : (
+        <article className="mt-6">
+          <h1 className="text-3xl font-semibold">{item.title}</h1>
+          <div className="mt-2 text-sm text-slate-500">{fmtDate(item.publishedAt)}</div>
+          {item.excerpt ? <p className="mt-4 text-slate-700">{item.excerpt}</p> : null}
+
+          <div className="prose prose-slate mt-8 max-w-none">
+            {item.body ? <PortableText value={item.body} /> : <p>(No body yet)</p>}
+          </div>
+        </article>
+      )}
+    </div>
   );
 }

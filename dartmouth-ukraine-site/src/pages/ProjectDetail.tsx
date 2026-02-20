@@ -4,113 +4,73 @@ import { client } from "../lib/sanity";
 import { qProjectBySlug } from "../lib/queries";
 import { PortableText } from "@portabletext/react";
 
-type ProjectFull = {
-  _id: string;
+type Project = {
   title: string;
-  slug: string;
-  summary?: string;
-  timeline?: string[];
-  impact?: string[];
-  links?: { label?: string; url?: string }[];
+  excerpt?: string;
+  category?: string;
+  status?: string;
+  content?: any[];
   coverImage?: { alt?: string; asset?: { url?: string } };
-  body?: any;
 };
 
 export default function ProjectDetail() {
   const { slug } = useParams();
-  const [item, setItem] = useState<ProjectFull | null>(null);
+  const [item, setItem] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
+  const [err, setErr] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!slug) return;
     let alive = true;
-    client
-      .fetch<ProjectFull>(qProjectBySlug, { slug })
-      .then((data) => {
-        if (!alive) return;
-        setItem(data || null);
-      })
-      .finally(() => {
-        if (!alive) return;
-        setLoading(false);
-      });
+    (async () => {
+      try {
+        const data = await client.fetch<Project>(qProjectBySlug, { slug });
+        if (alive) setItem(data || null);
+      } catch (e: any) {
+        if (alive) setErr(e?.message || "Failed to load project");
+      } finally {
+        if (alive) setLoading(false);
+      }
+    })();
     return () => {
       alive = false;
     };
   }, [slug]);
 
+  if (loading) return <div className="p-6">Loading…</div>;
+  if (err) return <div className="p-6 text-red-600">{err}</div>;
+  if (!item) return <div className="p-6">Not found.</div>;
+
+  const img = item.coverImage?.asset?.url;
+
   return (
     <div className="mx-auto max-w-3xl px-4 py-10">
-      <Link to="/projects" className="text-sm text-slate-600 hover:underline">
-        ← Back to projects
+      <Link to="/projects" className="text-sm text-gray-600 hover:underline">
+        ← Back to Projects
       </Link>
 
-      {loading ? (
-        <p className="mt-6 text-slate-600">Loading…</p>
-      ) : !item ? (
-        <div className="mt-6 rounded-xl border p-5">
-          <p className="font-medium">Not found.</p>
-          <p className="mt-1 text-sm text-slate-600">
-            If you just created it, make sure it’s <b>Published</b> and has a slug.
-          </p>
+      <h1 className="mt-4 text-3xl font-semibold tracking-tight">{item.title}</h1>
+
+      <div className="mt-3 flex flex-wrap gap-2 text-xs text-gray-600">
+        {item.category ? <span className="rounded-full border px-2 py-0.5">{item.category}</span> : null}
+        {item.status ? <span className="rounded-full border px-2 py-0.5">{item.status}</span> : null}
+      </div>
+
+      {img ? (
+        <div className="mt-6 overflow-hidden rounded-2xl border bg-gray-100">
+          <img
+            src={img}
+            alt={item.coverImage?.alt || item.title}
+            className="h-auto w-full object-cover"
+          />
         </div>
-      ) : (
-        <article className="mt-6">
-          {item.coverImage?.asset?.url ? (
-            <img
-              src={item.coverImage.asset.url}
-              alt={item.coverImage.alt || item.title}
-              className="mb-6 h-56 w-full rounded-2xl object-cover"
-            />
-          ) : null}
+      ) : null}
 
-          <h1 className="text-3xl font-semibold">{item.title}</h1>
-          {item.summary ? <p className="mt-3 text-slate-700">{item.summary}</p> : null}
+      {item.excerpt ? <p className="mt-6 text-gray-700">{item.excerpt}</p> : null}
 
-          <div className="mt-8 grid gap-6 sm:grid-cols-2">
-            {item.timeline?.length ? (
-              <section className="rounded-2xl border bg-white p-5">
-                <h2 className="font-semibold">Timeline</h2>
-                <ul className="mt-3 list-disc space-y-2 pl-5 text-slate-700">
-                  {item.timeline.map((t, i) => (
-                    <li key={i}>{t}</li>
-                  ))}
-                </ul>
-              </section>
-            ) : null}
+      <div className="prose prose-gray mt-8 max-w-none">
+        {item.content ? <PortableText value={item.content} /> : null}
+      </div>
 
-            {item.impact?.length ? (
-              <section className="rounded-2xl border bg-white p-5">
-                <h2 className="font-semibold">Impact</h2>
-                <ul className="mt-3 list-disc space-y-2 pl-5 text-slate-700">
-                  {item.impact.map((t, i) => (
-                    <li key={i}>{t}</li>
-                  ))}
-                </ul>
-              </section>
-            ) : null}
-          </div>
-
-          {item.links?.length ? (
-            <section className="mt-6 rounded-2xl border bg-white p-5">
-              <h2 className="font-semibold">Links</h2>
-              <ul className="mt-3 space-y-2">
-                {item.links.map((l, i) => (
-                  <li key={i}>
-                    <a className="text-blue-700 hover:underline" href={l.url || "#"} target="_blank" rel="noreferrer">
-                      {l.label || l.url}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          ) : null}
-
-          <div className="prose prose-slate mt-10 max-w-none">
-            {item.body ? <PortableText value={item.body} /> : <p>(No body yet)</p>}
-          </div>
-        </article>
-      )}
     </div>
   );
 }

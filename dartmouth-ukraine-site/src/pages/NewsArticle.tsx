@@ -1,75 +1,73 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { client } from "../lib/sanity";
-import { qNewsArticleBySlug } from "../lib/queries";
+import { qArticleBySlug } from "../lib/queries";
 import { PortableText } from "@portabletext/react";
 
-type NewsFull = {
-  _id: string;
+type Article = {
   title: string;
-  slug: string;
-  excerpt?: string;
   publishedAt?: string;
-  body?: any;
+  excerpt?: string;
+  content?: any[];
+  coverImage?: { alt?: string; asset?: { url?: string } };
 };
-
-function fmtDate(iso?: string) {
-  if (!iso) return "";
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "";
-  return d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
-}
 
 export default function NewsArticle() {
   const { slug } = useParams();
-  const [item, setItem] = useState<NewsFull | null>(null);
+  const [item, setItem] = useState<Article | null>(null);
   const [loading, setLoading] = useState(true);
+  const [err, setErr] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!slug) return;
     let alive = true;
-    client
-      .fetch<NewsFull>(qNewsArticleBySlug, { slug })
-      .then((data) => {
-        if (!alive) return;
-        setItem(data || null);
-      })
-      .finally(() => {
-        if (!alive) return;
-        setLoading(false);
-      });
-
+    (async () => {
+      try {
+        const data = await client.fetch<Article>(qArticleBySlug, { slug });
+        if (alive) setItem(data || null);
+      } catch (e: any) {
+        if (alive) setErr(e?.message || "Failed to load article");
+      } finally {
+        if (alive) setLoading(false);
+      }
+    })();
     return () => {
       alive = false;
     };
   }, [slug]);
 
+  if (loading) return <div className="p-6">Loading…</div>;
+  if (err) return <div className="p-6 text-red-600">{err}</div>;
+  if (!item) return <div className="p-6">Not found.</div>;
+
+  const img = item.coverImage?.asset?.url;
+
   return (
     <div className="mx-auto max-w-3xl px-4 py-10">
-      <Link to="/news" className="text-sm text-slate-600 hover:underline">
-        ← Back to news
+      <Link to="/news" className="text-sm text-gray-600 hover:underline">
+        ← Back to News
       </Link>
 
-      {loading ? (
-        <p className="mt-6 text-slate-600">Loading…</p>
-      ) : !item ? (
-        <div className="mt-6 rounded-xl border p-5">
-          <p className="font-medium">Not found.</p>
-          <p className="mt-1 text-sm text-slate-600">
-            If you just created it in Studio, make sure you clicked <b>Publish</b> and that the slug matches the URL.
-          </p>
-        </div>
-      ) : (
-        <article className="mt-6">
-          <h1 className="text-3xl font-semibold">{item.title}</h1>
-          <div className="mt-2 text-sm text-slate-500">{fmtDate(item.publishedAt)}</div>
-          {item.excerpt ? <p className="mt-4 text-slate-700">{item.excerpt}</p> : null}
+      <h1 className="mt-4 text-3xl font-semibold tracking-tight">{item.title}</h1>
 
-          <div className="prose prose-slate mt-8 max-w-none">
-            {item.body ? <PortableText value={item.body} /> : <p>(No body yet)</p>}
-          </div>
-        </article>
-      )}
+      <div className="mt-2 text-sm text-gray-500">
+        {item.publishedAt ? new Date(item.publishedAt).toLocaleDateString() : ""}
+      </div>
+
+      {img ? (
+        <div className="mt-6 overflow-hidden rounded-2xl border bg-gray-100">
+          <img
+            src={img}
+            alt={item.coverImage?.alt || item.title}
+            className="h-auto w-full object-cover"
+          />
+        </div>
+      ) : null}
+
+      {item.excerpt ? <p className="mt-6 text-gray-700">{item.excerpt}</p> : null}
+
+      <div className="prose prose-gray mt-8 max-w-none">
+        {item.content ? <PortableText value={item.content} /> : null}
+      </div>
     </div>
   );
 }

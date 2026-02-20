@@ -5,10 +5,13 @@ export default function Contact() {
 
       <div className="rounded-2xl border bg-white p-6 shadow-sm space-y-3">
         <p className="text-slate-700">
-          Email: <span className="font-medium">dartmouthukraine@dartmouth.edu</span> (replace)
+          Club President: <span className="font-medium">oleksandra.gol'dina.29@dartmouth.edu</span>
         </p>
         <p className="text-slate-700">
-          Instagram: <span className="font-medium">@dartmouth.ukraine.alliance</span>
+          Faculty Advisor: <span className="font-medium">victoria.somoff@dartmouth.edu</span>
+        </p>
+        <p className="text-slate-700">
+          Club Instagram: <span className="font-medium"><a href="https://www.instagram.com/dartmouth.ukraine.alliance/" target="_blank" rel="noopener noreferrer">dartmouth.ukraine.alliance</a></span>
         </p>
       </div>
     </div>

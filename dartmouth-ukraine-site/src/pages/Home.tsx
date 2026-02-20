@@ -12,7 +12,7 @@ export default function Home() {
           Supporting Ukraine through advocacy and action.
         </p>
 
-        <div className="flex justify-center gap-4 pt-4">
+        {/* <div className="flex justify-center gap-4 pt-4">
           <a
             href="/help"
             className="px-6 py-3 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 transition"
@@ -26,7 +26,7 @@ export default function Home() {
           >
             See Our Impact
           </a>
-        </div>
+        </div> */}
       </section>
 
       {/* MISSION */}
@@ -77,7 +77,7 @@ export default function Home() {
           href="/contact"
           className="inline-block px-6 py-3 bg-white text-slate-900 rounded-md font-medium hover:bg-slate-100 transition"
         >
-          Join the Alliance
+          Join the Club
         </a>
       </section>
 

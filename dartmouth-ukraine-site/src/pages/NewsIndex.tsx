@@ -1,83 +1,84 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { client } from "../lib/sanity";
-import { qLatestNewsArticles } from "../lib/queries";
+import { qArticles } from "../lib/queries";
 
-type NewsListItem = {
+type Article = {
   _id: string;
   title: string;
   slug: string;
   excerpt?: string;
   publishedAt?: string;
+  coverImage?: { alt?: string; asset?: { url?: string } };
 };
 
-function fmtDate(iso?: string) {
-  if (!iso) return "";
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "";
-  return d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
-}
-
 export default function NewsIndex() {
-  const [items, setItems] = useState<NewsListItem[]>([]);
+  const [items, setItems] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
+  const [err, setErr] = useState<string | null>(null);
 
   useEffect(() => {
     let alive = true;
-    client
-      .fetch<NewsListItem[]>(qLatestNewsArticles)
-      .then((data) => {
-        if (!alive) return;
-        setItems(data || []);
-      })
-      .finally(() => {
-        if (!alive) return;
-        setLoading(false);
-      });
+    (async () => {
+      try {
+        const data = await client.fetch<Article[]>(qArticles);
+        if (alive) setItems(data || []);
+      } catch (e: any) {
+        if (alive) setErr(e?.message || "Failed to load articles");
+      } finally {
+        if (alive) setLoading(false);
+      }
+    })();
     return () => {
       alive = false;
     };
   }, []);
 
+  if (loading) return <div className="p-6">Loading…</div>;
+  if (err) return <div className="p-6 text-red-600">{err}</div>;
+
   return (
     <div className="mx-auto max-w-5xl px-4 py-10">
-      <div className="mb-6">
-        <h1 className="text-3xl font-semibold">Articles / News</h1>
-        <p className="mt-2 text-slate-600">
-          Announcements, statements, and event recaps.
-        </p>
+      <div className="flex items-end justify-between gap-4">
+        <h1 className="text-3xl font-semibold tracking-tight">News</h1>
       </div>
 
-      {loading ? (
-        <p className="text-slate-600">Loading…</p>
-      ) : items.length === 0 ? (
-        <div className="rounded-xl border p-5 text-slate-700">
-          <p className="font-medium">No articles yet.</p>
-          <p className="mt-1 text-sm text-slate-600">
-            In Sanity Studio, create a <code>newsArticle</code> and make sure you click <b>Publish</b>.
-          </p>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {items.map((a) => (
+      <div className="mt-8 grid gap-6 sm:grid-cols-2">
+        {items.map((a) => {
+          const img = a.coverImage?.asset?.url;
+          return (
             <Link
               key={a._id}
               to={`/news/${a.slug}`}
-              className="block rounded-2xl border bg-white p-5 shadow-sm transition hover:shadow-md"
+              className="group overflow-hidden rounded-2xl border bg-white shadow-sm transition hover:shadow-md"
             >
-              <div className="flex items-start justify-between gap-4">
-                <h2 className="text-lg font-semibold">{a.title}</h2>
-                <span className="shrink-0 text-sm text-slate-500">
-                  {fmtDate(a.publishedAt)}
-                </span>
+              {img ? (
+                <div className="aspect-[16/9] w-full overflow-hidden bg-gray-100">
+                  <img
+                    src={img}
+                    alt={a.coverImage?.alt || a.title}
+                    className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
+                    loading="lazy"
+                  />
+                </div>
+              ) : (
+                <div className="aspect-[16/9] w-full bg-gray-100" />
+              )}
+
+              <div className="p-5">
+                <div className="text-xs text-gray-500">
+                  {a.publishedAt ? new Date(a.publishedAt).toLocaleDateString() : ""}
+                </div>
+                <div className="mt-2 text-lg font-semibold">{a.title}</div>
+                {a.excerpt ? <p className="mt-2 line-clamp-3 text-sm text-gray-600">{a.excerpt}</p> : null}
+                <div className="mt-4 text-sm font-medium text-gray-900 group-hover:underline">
+                  Read →
+                </div>
               </div>
-              {a.excerpt ? (
-                <p className="mt-2 text-slate-600">{a.excerpt}</p>
-              ) : null}
             </Link>
-          ))}
-        </div>
-      )}
+          );
+        })}
+      </div>
     </div>
   );
 }

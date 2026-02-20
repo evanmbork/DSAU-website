@@ -55,19 +55,19 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="space-y-16">
+    <div className="space-y-30">
       {/* HERO */}
-      <section className="text-center space-y-6">
+      <section className="text-center space-y-10 pt-16">
         <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-slate-900">
           Dartmouth Student Alliance for Ukraine
         </h1>
 
-        <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-          Supporting Ukraine through advocacy and action.
+        <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+          Supporting Ukraine through advocacy and action
         </p>
 
         {/* LATEST ARTICLE PREVIEW */}
-        <div className="max-w-3xl mx-auto pt-4">
+        <div className="max-w-3xl mx-auto pt-10">
           <div className="rounded-2xl border border-slate-200 bg-white shadow-sm text-left overflow-hidden">
             <div className="p-5 md:p-6">
               <div className="flex items-center justify-between gap-4">
@@ -160,16 +160,16 @@ export default function Home() {
           <h3 className="font-semibold text-slate-900 mb-4">What We Do</h3>
 
           <ul className="space-y-3 text-slate-600">
-            <li>• Publish articles and campus commentary</li>
+            <li>• Publish articles</li>
             <li>• Organize fundraisers and events</li>
             <li>• Partner with Ukrainian organizations</li>
-            <li>• Support students with Ukrainian heritage</li>
+            <li>• Support Ukrainian students</li>
           </ul>
         </div>
       </section>
 
       {/* CALL TO ACTION */}
-      <section className="bg-slate-900 text-white rounded-xl p-12 text-center space-y-6">
+      <section className="bg-slate-900 text-white rounded-xl p-12 text-center space-y-10">
         <h2 className="text-3xl font-semibold">Stand with Ukraine.</h2>
 
         <p className="text-slate-300 max-w-xl mx-auto">

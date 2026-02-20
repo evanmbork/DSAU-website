@@ -20,8 +20,8 @@ export default defineType({
       options: { hotspot: true },
     }),
     defineField({
-      name: 'summary',
-      title: 'Summary',
+      name: 'excerpt',
+      title: 'Excerpt',
       type: 'text',
       rows: 3,
     }),

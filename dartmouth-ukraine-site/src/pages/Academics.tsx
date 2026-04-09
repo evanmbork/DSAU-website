@@ -52,8 +52,8 @@ export default function Academics() {
     <div>
       <h1 className="text-3xl font-semibold tracking-tight">Ukrainian Courses at Dartmouth</h1>
 
-      <p className="mt-2 text-gray-600">
-        Dartmouth offers Ukrainian courses through the East European, Eurasian, and Russian Studies Department.
+      <p className="mt-4 max-w-2xl text-slate-600 leading-7">
+        Dartmouth offers Ukrainian courses through the East European, Eurasian, and Russian Studies Department (EEER). 
         These courses are open to all students and provide an opportunity to connect with Ukrainian culture,
         language, and literature. Whether you're a complete beginner or looking to deepen your proficiency, there's a course for you.
       </p>
@@ -69,9 +69,9 @@ export default function Academics() {
         {classes.length > 0 && (
           <div className="flex flex-col gap-4">
             {classes.map((c) => (
-              <div key={c._id} className="rounded-xl border border-slate-200 px-5 py-4">
-                {/* Title + course number */}
-                <div className="flex items-start justify-between gap-3 flex-wrap">
+              <div key={c._id} className="rounded-xl border border-slate-200 px-4 md:px-6 py-4">
+                {/* Title row */}
+                <div className="flex items-start justify-between gap-3">
                   <div>
                     {c.courseNumber && (
                       <p className="text-xs font-medium text-slate-400 uppercase tracking-wide">
@@ -89,7 +89,7 @@ export default function Academics() {
                   )}
                 </div>
 
-                {/* Meta info */}
+                {/* Meta — wraps naturally on mobile */}
                 <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-slate-600">
                   {c.term && <span>📅 {c.term}</span>}
                   {c.instructor && <span>👤 {c.instructor}</span>}
@@ -106,7 +106,7 @@ export default function Academics() {
                     href={c.registrationLink}
                     target="_blank"
                     rel="noreferrer"
-                    className="mt-3 inline-block text-sm font-medium text-blue-700 underline underline-offset-4 hover:text-blue-900"
+                    className="mt-3 inline-flex items-center min-h-[44px] text-sm font-medium text-blue-700 underline underline-offset-4 hover:text-blue-900"
                   >
                     View course →
                   </a>

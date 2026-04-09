@@ -17,10 +17,19 @@ export default {
     },
 
     { name: "bio", title: "Bio", type: "text", rows: 6 },
-
-    { name: "instagram", title: "Instagram Handle", type: "string", description: "Without the @ symbol" },
-
-    { name: "isAlumni", title: "Alumni", type: "boolean", description: "Check if this person is a Dartmouth graduate / alumni of the club" },
-    { name: "graduationYear", title: "Graduation Year", type: "string" },
+    {
+      name: "isAlumni",
+      title: "Alumni",
+      type: "boolean",
+      description: "Check this if this person is a Dartmouth graduate / former member.",
+      initialValue: false,
+    },
+    {
+      name: "graduationYear",
+      title: "Graduation Year",
+      type: "string",
+      description: "e.g. '25, '26",
+      hidden: ({ document }: any) => !document?.isAlumni,
+    },
   ],
 };

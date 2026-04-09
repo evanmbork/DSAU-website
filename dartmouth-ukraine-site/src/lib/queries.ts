@@ -76,7 +76,7 @@ export const qProjectSlugs = /* groq */ `
 `;
 
 export const qPeople = /* groq */ `
-*[_type == "person" && (isAlumni != true)] | order(name asc) {
+*[_type == "person" && !coalesce(isAlumni, false)] | order(name asc) {
   _id,
   name,
   role,
@@ -91,13 +91,10 @@ export const qPeople = /* groq */ `
 `;
 
 export const qAlumni = /* groq */ `
-*[_type == "person" && isAlumni == true] | order(graduationYear desc, name asc) {
+*[_type == "person" && coalesce(isAlumni, false)] | order(graduationYear desc, name asc) {
   _id,
   name,
   role,
-  email,
-  instagram,
-  bio,
   graduationYear,
   coverImage{
     alt,

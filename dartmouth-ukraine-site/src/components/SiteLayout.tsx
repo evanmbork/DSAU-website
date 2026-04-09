@@ -2,7 +2,14 @@ import {useState} from 'react'
 import {Link, NavLink, Outlet} from 'react-router-dom'
 import Footer from './SiteFooter'
 
-const BLUE = '#1e3a8a'
+const navItems = [
+  {to: '/news', label: 'Articles / News'},
+  {to: '/projects', label: 'Projects'},
+  {to: '/academics', label: 'Academics'},
+  {to: '/help', label: 'How to Help'},
+  {to: '/people', label: 'People'},
+  {to: '/contact', label: 'Contact'},
+]
 
 function NavItem({to, label, onClick}: {to: string; label: string; onClick?: () => void}) {
   return (
@@ -11,10 +18,8 @@ function NavItem({to, label, onClick}: {to: string; label: string; onClick?: () 
       onClick={onClick}
       className={({isActive}) =>
         [
-          'px-3 py-2 rounded-md text-sm font-medium transition-colors',
-          isActive
-            ? 'bg-white/20 text-white font-semibold'
-            : 'text-white hover:bg-white/10',
+          'block px-3 py-2.5 rounded-md text-sm font-medium min-h-[44px] flex items-center',
+          isActive ? 'bg-slate-100 text-slate-900' : 'text-slate-700 hover:bg-slate-50',
         ].join(' ')
       }
     >
@@ -25,62 +30,53 @@ function NavItem({to, label, onClick}: {to: string; label: string; onClick?: () 
 
 export default function SiteLayout() {
   const [menuOpen, setMenuOpen] = useState(false)
-  const close = () => setMenuOpen(false)
 
   return (
     <div className="min-h-screen flex flex-col">
-      <header style={{backgroundColor: BLUE}}>
-        <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/" className="font-semibold text-white">
+      <header className="border-b bg-white sticky top-0 z-50">
+        <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+          <Link to="/" className="font-semibold text-slate-900 text-sm leading-tight shrink-0">
             Dartmouth Student Alliance for Ukraine
           </Link>
 
           {/* Desktop nav */}
           <nav className="hidden md:flex gap-1">
-            <NavItem to="/news" label="News" />
-            <NavItem to="/projects" label="Projects" />
-            <NavItem to="/academics" label="Classes" />
-            <NavItem to="/help" label="How to Help" />
-            <NavItem to="/people" label="People" />
-            <NavItem to="/contact" label="Contact" />
+            {navItems.map((item) => (
+              <NavItem key={item.to} to={item.to} label={item.label} />
+            ))}
           </nav>
 
-          {/* Hamburger button */}
+          {/* Hamburger */}
           <button
-            className="md:hidden text-white p-2 rounded-md hover:bg-white/10 transition-colors"
-            aria-label="Toggle menu"
-            onClick={() => setMenuOpen(o => !o)}
+            className="md:hidden p-2 rounded-md text-slate-700 hover:bg-slate-100 min-h-[44px] min-w-[44px] flex items-center justify-center"
+            onClick={() => setMenuOpen((o) => !o)}
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={menuOpen}
           >
             {menuOpen ? (
-              <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                <line x1="4" y1="4" x2="18" y2="18" />
-                <line x1="18" y1="4" x2="4" y2="18" />
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             ) : (
-              <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                <line x1="3" y1="6" x2="19" y2="6" />
-                <line x1="3" y1="11" x2="19" y2="11" />
-                <line x1="3" y1="16" x2="19" y2="16" />
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             )}
           </button>
         </div>
 
-        {/* Mobile dropdown */}
+        {/* Mobile menu */}
         {menuOpen && (
-          <div className="md:hidden px-4 pb-3 flex flex-col gap-1" style={{backgroundColor: BLUE}}>
-            <NavItem to="/news" label="News" onClick={close} />
-            <NavItem to="/projects" label="Projects" onClick={close} />
-            <NavItem to="/academics" label="Classes" onClick={close} />
-            <NavItem to="/help" label="How to Help" onClick={close} />
-            <NavItem to="/people" label="People" onClick={close} />
-            <NavItem to="/contact" label="Contact" onClick={close} />
-          </div>
+          <nav className="md:hidden border-t bg-white px-4 pb-3">
+            {navItems.map((item) => (
+              <NavItem key={item.to} to={item.to} label={item.label} onClick={() => setMenuOpen(false)} />
+            ))}
+          </nav>
         )}
       </header>
 
       <main className="flex-1">
-        <div className="max-w-5xl mx-auto px-4 pt-10 pb-36">
+        <div className="max-w-5xl mx-auto px-4 py-8">
           <Outlet />
         </div>
       </main>

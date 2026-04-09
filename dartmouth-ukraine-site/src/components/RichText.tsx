@@ -1,8 +1,48 @@
 import { PortableText, type PortableTextComponents } from '@portabletext/react'
 import { urlFor } from '../lib/sanity'
 
+function toEmbedUrl(url: string): string | null {
+  try {
+    const u = new URL(url)
+    // YouTube
+    if (u.hostname.includes('youtube.com') || u.hostname.includes('youtu.be')) {
+      const id = u.hostname.includes('youtu.be')
+        ? u.pathname.slice(1)
+        : u.searchParams.get('v') ?? u.pathname.split('/').pop()
+      return id ? `https://www.youtube.com/embed/${id}` : null
+    }
+    // Vimeo
+    if (u.hostname.includes('vimeo.com')) {
+      const id = u.pathname.split('/').filter(Boolean).pop()
+      return id ? `https://player.vimeo.com/video/${id}` : null
+    }
+    return url
+  } catch {
+    return null
+  }
+}
+
 const components: PortableTextComponents = {
   types: {
+    videoEmbed: ({ value }) => {
+      const src = toEmbedUrl(value?.url)
+      if (!src) return null
+      return (
+        <figure className="my-6">
+          <div className="relative w-full" style={{paddingBottom: '56.25%'}}>
+            <iframe
+              src={src}
+              className="absolute inset-0 w-full h-full rounded-xl border border-slate-200"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+          {value?.caption ? (
+            <figcaption className="mt-2 text-sm text-slate-600">{value.caption}</figcaption>
+          ) : null}
+        </figure>
+      )
+    },
     image: ({ value }) => {
       if (!value?.asset) return null
 

@@ -131,7 +131,7 @@ export default function Home() {
               )}
             </div>
           </div>
-        </div>
+        </div> */}
       </section>
 
       {/* MISSION */}
@@ -151,7 +151,7 @@ export default function Home() {
         <div className="bg-slate-100 rounded-lg p-6 md:p-8">
           <h3 className="font-semibold text-slate-900 mb-4">What We Do</h3>
           <ul className="space-y-3 text-slate-600">
-            <li>• Publish articles</li>
+            <li>• Advocate for Ukraine on Campus</li>
             <li>• Organize fundraisers and events</li>
             <li>• Partner with Ukrainian organizations</li>
             <li>• Support Ukrainian students</li>
@@ -172,7 +172,7 @@ export default function Home() {
         >
           Join the Club
         </a>
-      </section>
+      </section> */}
     </div>
   )
 }

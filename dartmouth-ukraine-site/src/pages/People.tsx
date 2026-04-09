@@ -51,6 +51,51 @@ function PersonCard({p}: {p: Person}) {
   )
 }
 
+function PersonCard({ p }: { p: Person }) {
+  const img = p.coverImage?.asset?.url;
+  return (
+    <div className="overflow-hidden rounded-2xl border bg-white shadow-sm">
+      {img ? (
+        <div className="aspect-[4/3] w-full overflow-hidden bg-gray-100">
+          <img
+            src={img}
+            alt={p.coverImage?.alt || p.name}
+            className="h-full w-full object-cover"
+            loading="lazy"
+          />
+        </div>
+      ) : (
+        <div className="aspect-[4/3] w-full bg-gray-100" />
+      )}
+      <div className="p-5">
+        <div className="text-lg font-semibold">{p.name}</div>
+        {p.role ? <div className="mt-1 text-sm text-gray-600">{p.role}</div> : null}
+        {p.graduationYear ? <div className="mt-1 text-sm text-gray-500">Class of {p.graduationYear}</div> : null}
+        {p.bio ? <p className="mt-3 line-clamp-6 text-sm text-gray-700">{p.bio}</p> : null}
+        {p.email ? (
+          <div className="mt-4 text-sm">
+            <a className="text-blue-700 hover:underline" href={`mailto:${p.email}`}>
+              {p.email}
+            </a>
+          </div>
+        ) : null}
+        {p.instagram ? (
+          <div className="mt-2 text-sm">
+            <a
+              className="text-blue-700 hover:underline"
+              href={`https://instagram.com/${p.instagram}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              @{p.instagram}
+            </a>
+          </div>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
 export default function People() {
   const [people, setPeople] = useState<Person[]>([])
   const [alumni, setAlumni] = useState<Alum[]>([])

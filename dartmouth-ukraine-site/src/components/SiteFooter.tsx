@@ -1,4 +1,7 @@
-import { Link } from "react-router-dom";
+import {Link} from 'react-router-dom'
+import UkrainianBorder from './UkrainianBorder'
+
+const BLUE = '#1e3a8a'
 
 export default function Footer() {
   return (
@@ -12,8 +15,8 @@ export default function Footer() {
             target="_blank"
             rel="noreferrer"
           >
-            Instagram
-          </a>
+            Member Login
+          </Link>
         </div>
 
         {/* Discreet admin link */}
@@ -27,5 +30,5 @@ export default function Footer() {
         </Link>
       </div>
     </footer>
-  );
+  )
 }

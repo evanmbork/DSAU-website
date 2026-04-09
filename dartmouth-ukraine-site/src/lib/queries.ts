@@ -81,6 +81,7 @@ export const qPeople = /* groq */ `
   name,
   role,
   email,
+  instagram,
   bio,
   coverImage{
     alt,

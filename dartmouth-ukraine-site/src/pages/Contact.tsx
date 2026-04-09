@@ -1,7 +1,7 @@
 export default function Contact() {
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-semibold text-slate-900">Contact Us</h1>
+      <h1 className="text-3xl font-semibold tracking-tight">Contact Us</h1>
 
       <div className="rounded-2xl border bg-white p-6 shadow-sm space-y-5">
         <div>

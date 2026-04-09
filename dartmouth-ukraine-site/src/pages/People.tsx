@@ -13,13 +13,6 @@ type Person = {
   coverImage?: {alt?: string; asset?: {url?: string}}
 }
 
-type Alum = {
-  _id: string
-  name: string
-  role?: string
-  graduationYear?: string
-  coverImage?: {alt?: string; asset?: {url?: string}}
-}
 
 function PersonCard({ p }: { p: Person }) {
   const img = p.coverImage?.asset?.url;
@@ -68,7 +61,7 @@ function PersonCard({ p }: { p: Person }) {
 
 export default function People() {
   const [people, setPeople] = useState<Person[]>([])
-  const [alumni, setAlumni] = useState<Alum[]>([])
+  const [alumni, setAlumni] = useState<Person[]>([])
   const [loading, setLoading] = useState(true)
   const [err, setErr] = useState<string | null>(null)
 
@@ -78,7 +71,7 @@ export default function People() {
       try {
         const [peopleData, alumniData] = await Promise.all([
           client.fetch<Person[]>(qPeople),
-          client.fetch<Alum[]>(qAlumni),
+          client.fetch<Person[]>(qAlumni),
         ])
         if (alive) {
           setPeople(peopleData || [])
@@ -117,29 +110,8 @@ export default function People() {
         {alumni.length === 0 ? (
           <p className="mt-6 text-slate-500">No alumni listed yet.</p>
         ) : (
-          <div className="mt-6 flex flex-col gap-3">
-            {alumni.map((a) => (
-              <div key={a._id} className="flex items-center gap-4 rounded-xl border border-slate-200 px-5 py-3">
-                {a.coverImage?.asset?.url ? (
-                  <img
-                    src={a.coverImage.asset.url}
-                    alt={a.coverImage.alt || a.name}
-                    className="w-10 h-10 rounded-full object-cover border border-slate-200 shrink-0"
-                    loading="lazy"
-                  />
-                ) : (
-                  <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 shrink-0" />
-                )}
-                <div className="min-w-0">
-                  <span className="font-medium text-slate-900">{a.name}</span>
-                  {(a.role || a.graduationYear) && (
-                    <span className="ml-2 text-sm text-slate-500">
-                      {[a.role, a.graduationYear && `'${a.graduationYear}`].filter(Boolean).join(' · ')}
-                    </span>
-                  )}
-                </div>
-              </div>
-            ))}
+          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {alumni.map((a) => <PersonCard key={a._id} p={a} />)}
           </div>
         )}
       </div>

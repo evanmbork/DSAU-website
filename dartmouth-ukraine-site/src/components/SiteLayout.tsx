@@ -10,7 +10,7 @@ const navItems = [
   {to: '/academics', label: 'Classes'},
   {to: '/help', label: 'How to Help'},
   {to: '/people', label: 'People'},
-  {to: '/contact', label: 'Contact'},
+  {to: '/contact', label: 'Contact Us'},
 ]
 
 function NavItem({to, label, onClick}: {to: string; label: string; onClick?: () => void}) {

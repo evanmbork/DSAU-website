@@ -95,6 +95,9 @@ export const qAlumni = /* groq */ `
   _id,
   name,
   role,
+  email,
+  instagram,
+  bio,
   graduationYear,
   coverImage{
     alt,

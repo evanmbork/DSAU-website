@@ -17,6 +17,8 @@ export default {
     },
 
     { name: "bio", title: "Bio", type: "text", rows: 6 },
+
+    { name: "instagram", title: "Instagram Handle", type: "string", description: "Without the @ symbol" },
     {
       name: "isAlumni",
       title: "Alumni",

@@ -88,3 +88,17 @@ export const qPeople = /* groq */ `
   }
 }
 `;
+
+export const qUkrainianClasses = /* groq */ `
+*[_type == "ukrainianClass"] | order(term asc, title asc) {
+  _id,
+  title,
+  courseNumber,
+  term,
+  instructor,
+  level,
+  description,
+  schedule,
+  registrationLink
+}
+`;

@@ -1,4 +1,5 @@
 import React from "react";
+import flagImg from "../assets/Flag_of_Ukraine.svg.png";
 import { client, urlFor } from "../lib/sanity";
 import groq from "groq";
 
@@ -58,6 +59,11 @@ export default function Home() {
     <div className="space-y-30">
       {/* HERO */}
       <section className="text-center space-y-10 pt-16">
+        <img
+          src={flagImg}
+          alt="Flag of Ukraine"
+          className="mx-auto w-24 rounded-sm shadow-sm"
+        />
         <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-slate-900">
           Dartmouth Student Alliance for Ukraine
         </h1>

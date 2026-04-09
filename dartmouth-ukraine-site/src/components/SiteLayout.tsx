@@ -30,6 +30,7 @@ export default function SiteLayout() {
           <nav className="flex gap-1">
             <NavItem to="/news" label="Articles / News" />
             <NavItem to="/projects" label="Projects" />
+            <NavItem to="/academics" label="Academics" />
             <NavItem to="/help" label="How to Help" />
             <NavItem to="/people" label="People" />
             <NavItem to="/contact" label="Contact" />

@@ -14,6 +14,7 @@ import HowToHelp from "./pages/HowToHelp";
 import People from "./pages/People";
 import Contact from "./pages/Contact";
 import AdminRedirect from "./pages/AdminRedirect";
+import Academics from "./pages/Academics";
 import NotFound from "./pages/NotFound";
 
 export const createRoot = ViteReactSSG(
@@ -31,6 +32,7 @@ export const createRoot = ViteReactSSG(
           { path: "projects", element: <ProjectsIndex /> },
           { path: "projects/:slug", element: <ProjectDetail /> },
 
+          { path: "academics", element: <Academics /> },
           { path: "help", element: <HowToHelp /> },
           { path: "people", element: <People /> },
           { path: "contact", element: <Contact /> },

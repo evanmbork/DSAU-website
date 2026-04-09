@@ -76,12 +76,29 @@ export const qProjectSlugs = /* groq */ `
 `;
 
 export const qPeople = /* groq */ `
-*[_type == "person"] | order(name asc) {
+*[_type == "person" && (isAlumni != true)] | order(name asc) {
   _id,
   name,
   role,
   email,
+  instagram,
   bio,
+  coverImage{
+    alt,
+    asset->{ url }
+  }
+}
+`;
+
+export const qAlumni = /* groq */ `
+*[_type == "person" && isAlumni == true] | order(graduationYear desc, name asc) {
+  _id,
+  name,
+  role,
+  email,
+  instagram,
+  bio,
+  graduationYear,
   coverImage{
     alt,
     asset->{ url }

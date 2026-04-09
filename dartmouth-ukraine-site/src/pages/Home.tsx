@@ -56,9 +56,9 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="space-y-30">
+    <div className="space-y-20">
       {/* HERO */}
-      <section className="text-center space-y-10 pt-16">
+      <section className="text-center space-y-10 pt-4">
         <img
           src={flagImg}
           alt="Flag of Ukraine"
@@ -73,7 +73,7 @@ export default function Home() {
         </p>
 
         {/* LATEST ARTICLE PREVIEW */}
-        <div className="max-w-3xl mx-auto pt-10">
+        {/* <div className="max-w-3xl mx-auto pt-10">
           <div className="rounded-2xl border border-slate-200 bg-white shadow-sm text-left overflow-hidden">
             <div className="p-5 md:p-6">
               <div className="flex items-center justify-between gap-4">
@@ -143,12 +143,12 @@ export default function Home() {
               )}
             </div>
           </div>
-        </div>
+        </div> */}
       </section>
 
       {/* MISSION */}
       <section className="grid md:grid-cols-2 gap-12 items-center">
-        <div className="space-y-4">
+        <div className="space-y-4 text-center md:text-left">
           <h2 className="text-2xl font-semibold text-slate-900">Our Mission</h2>
 
           <p className="text-slate-600 leading-relaxed">
@@ -162,11 +162,11 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="bg-slate-100 rounded-lg p-8">
+        <div className="bg-slate-100 rounded-lg p-8 text-center md:text-left">
           <h3 className="font-semibold text-slate-900 mb-4">What We Do</h3>
 
           <ul className="space-y-3 text-slate-600">
-            <li>• Publish articles</li>
+            <li>• Advocate for Ukraine on Campus</li>
             <li>• Organize fundraisers and events</li>
             <li>• Partner with Ukrainian organizations</li>
             <li>• Support Ukrainian students</li>
@@ -175,7 +175,7 @@ export default function Home() {
       </section>
 
       {/* CALL TO ACTION */}
-      <section className="bg-slate-900 text-white rounded-xl p-12 text-center space-y-10">
+      {/* <section className="text-white rounded-xl p-16 text-center space-y-10" style={{backgroundColor: '#1e3a8a'}}>
         <h2 className="text-3xl font-semibold">Stand with Ukraine.</h2>
 
         <p className="text-slate-300 max-w-xl mx-auto">
@@ -188,7 +188,7 @@ export default function Home() {
         >
           Join the Club
         </a>
-      </section>
+      </section> */}
     </div>
   );
 }

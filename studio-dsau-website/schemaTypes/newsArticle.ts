@@ -44,6 +44,30 @@ export default defineType({
             { name: 'caption', title: 'Caption', type: 'string' },
           ],
         },
+        {
+          type: 'object',
+          name: 'videoEmbed',
+          title: 'Video Embed',
+          fields: [
+            {
+              name: 'url',
+              title: 'YouTube or Vimeo URL',
+              type: 'url',
+              validation: (r: any) => r.required(),
+            },
+            {
+              name: 'caption',
+              title: 'Caption',
+              type: 'string',
+            },
+          ],
+          preview: {
+            select: { title: 'url' },
+            prepare(value: Record<string, any>) {
+              return { title: '🎥 ' + (value.title || 'Video') }
+            },
+          },
+        },
       ],
     }),
   ],

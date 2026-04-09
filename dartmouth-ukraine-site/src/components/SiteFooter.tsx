@@ -5,29 +5,35 @@ const BLUE = '#1e3a8a'
 
 export default function Footer() {
   return (
-    <footer className="border-t bg-white">
-      <div className="max-w-5xl mx-auto px-4 py-5 flex items-center justify-between text-sm text-slate-600">
-        <div className="flex items-center gap-4">
-          <span>© {new Date().getFullYear()} DSAU</span>
-          <a
-            className="hover:text-slate-900"
-            href="https://www.instagram.com/dartmouth.ukraine.alliance/"
-            target="_blank"
-            rel="noreferrer"
+    <footer>
+      <UkrainianBorder id="ua-footer" />
+
+      <div
+        style={{backgroundColor: BLUE}}
+        className="max-w-full px-4 py-6"
+      >
+        <div className="max-w-5xl mx-auto flex items-center justify-between text-sm text-white/70">
+          <div className="flex gap-4">
+            <span className="text-white font-medium">© {new Date().getFullYear()} DSAU</span>
+            <a
+              className="text-white font-medium hover:text-white/70 transition-colors"
+              href="https://www.instagram.com/dartmouth.ukraine.alliance/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Instagram
+            </a>
+          </div>
+
+          <Link
+            to="/admin"
+            className="opacity-30 hover:opacity-70 text-white transition-opacity"
+            aria-label="Admin login"
+            title="Admin"
           >
             Member Login
           </Link>
         </div>
-
-        {/* Discreet admin link */}
-        <Link
-          to="/admin"
-          className="opacity-50 hover:opacity-100 hover:text-slate-900 min-h-[44px] min-w-[44px] flex items-center justify-center"
-          aria-label="Admin login"
-          title="Admin"
-        >
-          •
-        </Link>
       </div>
     </footer>
   )

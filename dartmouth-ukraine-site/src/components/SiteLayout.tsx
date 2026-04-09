@@ -2,10 +2,12 @@ import {useState} from 'react'
 import {Link, NavLink, Outlet} from 'react-router-dom'
 import Footer from './SiteFooter'
 
+const BLUE = '#1e3a8a'
+
 const navItems = [
-  {to: '/news', label: 'Articles / News'},
+  {to: '/news', label: 'News'},
   {to: '/projects', label: 'Projects'},
-  {to: '/academics', label: 'Academics'},
+  {to: '/academics', label: 'Classes'},
   {to: '/help', label: 'How to Help'},
   {to: '/people', label: 'People'},
   {to: '/contact', label: 'Contact'},
@@ -19,7 +21,7 @@ function NavItem({to, label, onClick}: {to: string; label: string; onClick?: () 
       className={({isActive}) =>
         [
           'block px-3 py-2.5 rounded-md text-sm font-medium min-h-[44px] flex items-center',
-          isActive ? 'bg-slate-100 text-slate-900' : 'text-slate-700 hover:bg-slate-50',
+          isActive ? 'bg-white/20 text-white font-semibold' : 'text-white hover:bg-white/10',
         ].join(' ')
       }
     >
@@ -33,9 +35,9 @@ export default function SiteLayout() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="border-b bg-white sticky top-0 z-50">
+      <header style={{backgroundColor: BLUE}}>
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
-          <Link to="/" className="font-semibold text-slate-900 text-sm leading-tight shrink-0">
+          <Link to="/" className="font-semibold text-white text-sm leading-tight shrink-0">
             Dartmouth Student Alliance for Ukraine
           </Link>
 
@@ -48,7 +50,7 @@ export default function SiteLayout() {
 
           {/* Hamburger */}
           <button
-            className="md:hidden p-2 rounded-md text-slate-700 hover:bg-slate-100 min-h-[44px] min-w-[44px] flex items-center justify-center"
+            className="md:hidden p-2 rounded-md text-white hover:bg-white/10 min-h-[44px] min-w-[44px] flex items-center justify-center"
             onClick={() => setMenuOpen((o) => !o)}
             aria-label={menuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={menuOpen}
@@ -67,7 +69,7 @@ export default function SiteLayout() {
 
         {/* Mobile menu */}
         {menuOpen && (
-          <nav className="md:hidden border-t bg-white px-4 pb-3">
+          <nav className="md:hidden px-4 pb-3" style={{backgroundColor: BLUE}}>
             {navItems.map((item) => (
               <NavItem key={item.to} to={item.to} label={item.label} onClick={() => setMenuOpen(false)} />
             ))}
@@ -76,7 +78,7 @@ export default function SiteLayout() {
       </header>
 
       <main className="flex-1">
-        <div className="max-w-5xl mx-auto px-4 py-8">
+        <div className="max-w-5xl mx-auto px-4 pt-10 pb-36">
           <Outlet />
         </div>
       </main>

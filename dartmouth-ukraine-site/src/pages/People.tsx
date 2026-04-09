@@ -7,7 +7,9 @@ type Person = {
   name: string
   role?: string
   email?: string
+  instagram?: string
   bio?: string
+  graduationYear?: string
   coverImage?: {alt?: string; asset?: {url?: string}}
 }
 
@@ -17,38 +19,6 @@ type Alum = {
   role?: string
   graduationYear?: string
   coverImage?: {alt?: string; asset?: {url?: string}}
-}
-
-function PersonCard({p}: {p: Person}) {
-  const img = p.coverImage?.asset?.url
-  return (
-    <div className="overflow-hidden rounded-2xl border bg-white shadow-sm">
-      {img ? (
-        <div className="aspect-[4/3] w-full overflow-hidden bg-gray-100">
-          <img
-            src={img}
-            alt={p.coverImage?.alt || p.name}
-            className="h-full w-full object-cover"
-            loading="lazy"
-          />
-        </div>
-      ) : (
-        <div className="aspect-[4/3] w-full bg-gray-100" />
-      )}
-      <div className="p-5">
-        <div className="text-lg font-semibold">{p.name}</div>
-        {p.role ? <div className="mt-1 text-sm text-gray-600">{p.role}</div> : null}
-        {p.bio ? <p className="mt-3 line-clamp-6 text-sm text-gray-700">{p.bio}</p> : null}
-        {p.email ? (
-          <div className="mt-4 text-sm">
-            <a className="text-blue-700 hover:underline break-all" href={`mailto:${p.email}`}>
-              {p.email}
-            </a>
-          </div>
-        ) : null}
-      </div>
-    </div>
-  )
 }
 
 function PersonCard({ p }: { p: Person }) {

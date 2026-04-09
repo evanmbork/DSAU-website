@@ -1,57 +1,6 @@
-import React from 'react'
 import flagImg from '../assets/Flag_of_Ukraine.svg.png'
-import {client, urlFor} from '../lib/sanity'
-import groq from 'groq'
-
-type LatestArticle = {
-  title?: string
-  slug?: string
-  excerpt?: string
-  publishedAt?: string
-  coverImage?: any
-}
-
-const latestNewsQuery = groq`*[_type == "newsArticle" && defined(slug.current)]
-| order(coalesce(publishedAt, _createdAt) desc)[0]{
-  title,
-  "slug": slug.current,
-  excerpt,
-  publishedAt,
-  coverImage
-}`
-
-function formatDate(iso?: string) {
-  if (!iso) return ''
-  const d = new Date(iso)
-  if (Number.isNaN(d.getTime())) return ''
-  return d.toLocaleDateString(undefined, {year: 'numeric', month: 'short', day: 'numeric'})
-}
 
 export default function Home() {
-  const [latest, setLatest] = React.useState<LatestArticle | null>(null)
-  const [loading, setLoading] = React.useState(true)
-
-  React.useEffect(() => {
-    let mounted = true
-    client
-      .fetch<LatestArticle | null>(latestNewsQuery)
-      .then((doc) => {
-        if (!mounted) return
-        setLatest(doc ?? null)
-      })
-      .catch((err) => {
-        console.error('Failed to load latest news article:', err)
-        if (!mounted) return
-        setLatest(null)
-      })
-      .finally(() => {
-        if (!mounted) return
-        setLoading(false)
-      })
-    return () => {
-      mounted = false
-    }
-  }, [])
 
   return (
     <div className="space-y-16 md:space-y-24">
@@ -67,7 +16,7 @@ export default function Home() {
           Supporting Ukraine through advocacy and action
         </p>
 
-        {/* LATEST ARTICLE PREVIEW */}
+        {/* LATEST ARTICLE PREVIEW
         <div className="max-w-3xl mx-auto pt-4 md:pt-8">
           <div className="rounded-2xl border border-slate-200 bg-white shadow-sm text-left overflow-hidden">
             <div className="p-4 md:p-6">
@@ -136,7 +85,7 @@ export default function Home() {
 
       {/* MISSION */}
       <section className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
-        <div className="space-y-4">
+        <div className="space-y-4 text-center md:text-left">
           <h2 className="text-2xl font-semibold text-slate-900">Our Mission</h2>
           <p className="text-slate-600 leading-relaxed">
             We aim to raise awareness about the ongoing war in Ukraine, support humanitarian efforts,
@@ -148,7 +97,7 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="bg-slate-100 rounded-lg p-6 md:p-8">
+        <div className="bg-slate-100 rounded-lg p-6 md:p-8 text-center md:text-left">
           <h3 className="font-semibold text-slate-900 mb-4">What We Do</h3>
           <ul className="space-y-3 text-slate-600">
             <li>• Advocate for Ukraine on Campus</li>
@@ -160,9 +109,9 @@ export default function Home() {
       </section>
 
       {/* CALL TO ACTION */}
-      <section className="bg-slate-900 text-white rounded-xl p-8 md:p-12 text-center space-y-6">
+      <section className="text-white rounded-xl p-8 md:p-12 text-center space-y-6" style={{backgroundColor: '#1e3a8a'}}>
         <h2 className="text-2xl md:text-3xl font-semibold">Stand with Ukraine.</h2>
-        <p className="text-slate-300 max-w-xl mx-auto">
+        <p className="text-white/80 max-w-xl mx-auto">
           Whether you're Ukrainian or simply care about democracy and sovereignty, there's a place for
           you in the club.
         </p>
@@ -172,7 +121,7 @@ export default function Home() {
         >
           Join the Club
         </a>
-      </section> */}
+      </section>
     </div>
   )
 }

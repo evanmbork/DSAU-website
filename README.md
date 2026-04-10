@@ -2,6 +2,7 @@ This is the website for the Dartmouth Student Alliance for Ukraine.
 Frontend Deploy Link: https://dsau-website.onrender.com/
 
 Tech Stack:
+  
   Frontend     
   - React 19 with TypeScript                                                                                           
   - Vite + vite-react-ssg (static site generation)

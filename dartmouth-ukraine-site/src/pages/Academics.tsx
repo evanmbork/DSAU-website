@@ -55,7 +55,7 @@ export default function Academics() {
       <p className="mt-4 max-w-2xl text-slate-600 leading-7">
         Dartmouth offers Ukrainian courses through the East European, Eurasian, and Russian Studies Department (EEER). 
         These courses are open to all students and provide an opportunity to connect with Ukrainian culture,
-        language, and literature. Whether you're a complete beginner or looking to deepen your proficiency, there's a course for you.
+        language, and literature. Whether you're a complete beginner, a native speaker, or anywhere in between, there's a course for you.
       </p>
 
       <div className="mt-10">

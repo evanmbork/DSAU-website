@@ -17,7 +17,7 @@ export default function Footer() {
             <span className="text-white font-medium">© {new Date().getFullYear()} DSAU</span>
             <a
               className="text-white font-medium hover:text-white/70 transition-colors"
-              href="https://www.instagram.com/dartmouth.ukraine.alliance/"
+              href="https://www.instagram.com/ukraine.at.dartmouth/"
               target="_blank"
               rel="noreferrer"
             >

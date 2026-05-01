@@ -27,7 +27,7 @@ export default function Contact() {
         <div>
           <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Instagram</p>
           <a
-            href="https://www.instagram.com/dartmouth.ukraine.alliance/"
+            href="https://www.instagram.com/ukraine.at.dartmouth/"
             target="_blank"
             rel="noopener noreferrer"
             className="mt-1 block text-base font-medium text-blue-700 hover:underline"

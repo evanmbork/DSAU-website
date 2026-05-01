@@ -5,6 +5,7 @@ import Footer from './SiteFooter'
 const BLUE = '#1e3a8a'
 
 const navItems = [
+  {to: '/', label: 'Home'},
   {to: '/news', label: 'News'},
   {to: '/projects', label: 'Projects'},
   {to: '/academics', label: 'Classes'},

@@ -13,11 +13,72 @@ type Person = {
   coverImage?: {alt?: string; asset?: {url?: string}}
 }
 
-
-function PersonCard({ p }: { p: Person }) {
+function PersonModal({ p, onClose }: { p: Person; onClose: () => void }) {
   const img = p.coverImage?.asset?.url;
   return (
-    <div className="overflow-hidden rounded-2xl border bg-white shadow-sm">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+      onClick={onClose}
+    >
+      <div
+        className="relative max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white shadow-xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          onClick={onClose}
+          className="absolute right-4 top-4 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white/80 text-gray-600 hover:bg-gray-100"
+          aria-label="Close"
+        >
+          ✕
+        </button>
+        {img ? (
+          <div className="aspect-[4/3] w-full overflow-hidden bg-gray-100">
+            <img
+              src={img}
+              alt={p.coverImage?.alt || p.name}
+              className="h-full w-full object-cover"
+            />
+          </div>
+        ) : (
+          <div className="aspect-[4/3] w-full bg-gray-100" />
+        )}
+        <div className="p-6">
+          <div className="text-xl font-semibold">{p.name}</div>
+          {p.role ? <div className="mt-1 text-sm text-gray-600">{p.role}</div> : null}
+          {p.graduationYear ? <div className="mt-1 text-sm text-gray-500">Class of {p.graduationYear}</div> : null}
+          {p.bio ? <p className="mt-4 text-sm leading-relaxed text-gray-700">{p.bio}</p> : null}
+          {p.email ? (
+            <div className="mt-4 text-sm">
+              <a className="text-blue-700 hover:underline" href={`mailto:${p.email}`}>
+                {p.email}
+              </a>
+            </div>
+          ) : null}
+          {p.instagram ? (
+            <div className="mt-2 text-sm">
+              <a
+                className="text-blue-700 hover:underline"
+                href={`https://instagram.com/${p.instagram}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                @{p.instagram}
+              </a>
+            </div>
+          ) : null}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PersonCard({ p, onClick }: { p: Person; onClick: () => void }) {
+  const img = p.coverImage?.asset?.url;
+  return (
+    <div
+      className="cursor-pointer overflow-hidden rounded-2xl border bg-white shadow-sm transition-shadow hover:shadow-md"
+      onClick={onClick}
+    >
       {img ? (
         <div className="aspect-[4/3] w-full overflow-hidden bg-gray-100">
           <img
@@ -36,14 +97,14 @@ function PersonCard({ p }: { p: Person }) {
         {p.graduationYear ? <div className="mt-1 text-sm text-gray-500">Class of {p.graduationYear}</div> : null}
         {p.bio ? <p className="mt-3 line-clamp-6 text-sm text-gray-700">{p.bio}</p> : null}
         {p.email ? (
-          <div className="mt-4 text-sm">
+          <div className="mt-4 text-sm" onClick={(e) => e.stopPropagation()}>
             <a className="text-blue-700 hover:underline" href={`mailto:${p.email}`}>
               {p.email}
             </a>
           </div>
         ) : null}
         {p.instagram ? (
-          <div className="mt-2 text-sm">
+          <div className="mt-2 text-sm" onClick={(e) => e.stopPropagation()}>
             <a
               className="text-blue-700 hover:underline"
               href={`https://instagram.com/${p.instagram}`}
@@ -64,6 +125,7 @@ export default function People() {
   const [alumni, setAlumni] = useState<Person[]>([])
   const [loading, setLoading] = useState(true)
   const [err, setErr] = useState<string | null>(null)
+  const [selected, setSelected] = useState<Person | null>(null)
 
   useEffect(() => {
     let alive = true
@@ -88,17 +150,28 @@ export default function People() {
     }
   }, [])
 
+  useEffect(() => {
+    if (selected) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => { document.body.style.overflow = '' }
+  }, [selected])
+
   if (loading) return <div className="p-6">Loading…</div>
   if (err) return <div className="p-6 text-red-600">{err}</div>
 
   return (
     <div className="max-w-5xl">
+      {selected && <PersonModal p={selected} onClose={() => setSelected(null)} />}
+
       <h1 className="text-3xl font-semibold tracking-tight">People</h1>
       <p className="mt-2 text-gray-600">The team behind DSAU.</p>
 
       <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {people.map((p) => (
-          <PersonCard key={p._id} p={p} />
+          <PersonCard key={p._id} p={p} onClick={() => setSelected(p)} />
         ))}
       </div>
 
@@ -111,7 +184,7 @@ export default function People() {
           <p className="mt-6 text-slate-500">No alumni listed yet.</p>
         ) : (
           <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {alumni.map((a) => <PersonCard key={a._id} p={a} />)}
+            {alumni.map((a) => <PersonCard key={a._id} p={a} onClick={() => setSelected(a)} />)}
           </div>
         )}
       </div>

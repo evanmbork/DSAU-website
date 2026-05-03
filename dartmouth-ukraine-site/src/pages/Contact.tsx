@@ -32,7 +32,7 @@ export default function Contact() {
             rel="noopener noreferrer"
             className="mt-1 block text-base font-medium text-blue-700 hover:underline"
           >
-            @dartmouth.ukraine.alliance
+            @ukraine.at.dartmouth
           </a>
         </div>
       </div>

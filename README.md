@@ -1,5 +1,5 @@
 This is the website for the Dartmouth Student Alliance for Ukraine. 
-Frontend Deploy Link: https://dsau-website.onrender.com/
+Frontend Deploy Link: https://ukraineatdartmouth.com/
 
 Tech Stack:
   
